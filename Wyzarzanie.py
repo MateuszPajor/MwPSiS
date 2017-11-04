@@ -20,9 +20,6 @@ cities_no = len(cities)
 
 
 def draw_chart(path, duration = 0.5):
-    print "path to ", path
-    print "path [0] to ", path[0]
-
     path.append(path[0])
     labels = ['miasto_{}'.format(i + 1) for i in range(len(cities))]
     plt.plot(*zip(*path), marker='x')
