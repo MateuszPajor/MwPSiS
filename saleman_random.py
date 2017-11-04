@@ -55,21 +55,31 @@ def swap(cities):
 #             for k in cities:
 #                 dis.append(round(math.sqrt((i[0]-j[0])**2 + (i[1]-j[1])**2), 2))
 #         all_distances.append(dis)
-
+def check_bak(new_tour):
+    if new_tour > bak_treshold:
+        print "find the nearest petrol station"
+        # find the nearest petrol station
+        # add distance station-next_city to new tour
+        # set bak to full
 
 
 def count_distance(cities, tour, zlamane_iteracje):
+    tracer = 0
+    bak = 100
+    bak_treshold = 50
     count_sum = True
-    new_tour = 0
+
     for i in range(cities_no):
         if i == cities_no-1:
             dis.append(round(math.sqrt((cities[i][0] - cities[0][0])**2 + ((cities[i][1] - cities[0][1])**2)), 2))
         else:
             dis.append(round(math.sqrt((cities[i][0] - cities[i+1][0])**2 + ((cities[i][1] - cities[i+1][1])**2)), 2))
         new_tour = new_tour + dis[i]
+        bak = bak - dis[i]*0.05      #zmienijszenie backu
 
         #wyrazenie warunkowe obnizajace koszty obliczeniowe w skrypcie
         #jezeli w czasie obliczen kosztu nowej trasy napotkamy na wartosc, ktora JUZ przekracza ostatnia najoptymalniejsza, to przestajemy juz dalej ja liczyc
+
         if tour <= new_tour:
             count_sum = False
             zlamane_iteracje = zlamane_iteracje +1
