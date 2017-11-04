@@ -58,9 +58,11 @@ def swap(cities):
 #         all_distances.append(dis)
 
 
-def add_gasStation(new_tour):
+def add_gasStation(new_tour, city):
 
         print "find the nearest gas station"
+        street =  0
+
         #TODO find the nearest gas station
         #TODO add distance station-next_city to new tour
         #TODO set bak to full
@@ -85,7 +87,7 @@ def count_distance(cities, tour, zlamane_iteracje):
         #wyrazenie warunkowe obnizajace koszty obliczeniowe w skrypcie
         #jezeli w czasie obliczen kosztu nowej trasy napotkamy na wartosc, ktora JUZ przekracza ostatnia najoptymalniejsza, to przestajemy juz dalej ja liczyc
         if new_tour > bak_treshold:
-           new_tour = add_gasStation(new_tour)
+           new_tour = add_gasStation(new_tour, cities[i])
         if tour <= new_tour:
             count_sum = False
             zlamane_iteracje = zlamane_iteracje +1
