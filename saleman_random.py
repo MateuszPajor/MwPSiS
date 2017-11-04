@@ -18,7 +18,7 @@ cities = [[16, 50], [62, 91], [39, 92], [43, 8], [11, 71], [34, 31], [71, 24],[3
 cities_no = len(cities)
 #----------------------------------------------------
 #-- GAS STATIONS ---
-gas_station = [[23, 56], [85, 34], [83, 21], [68, 23], [94, 32], [83, 35], [47, 23]]
+gas_station = [[70, 56], [85, 34], [83, 21], [38, 23], [94, 32], [83, 35], [47, 23]]
 
 
 
@@ -61,18 +61,31 @@ def swap(cities):
 def add_gasStation(new_tour, city):
 
         print "find the nearest gas station"
-        street =  0
+        distances_to_gas_stations = []
+        print "stacje paliw -> ", gas_station
+        print "miasto ->", city
+        for cor in gas_station:
+            distances_to_gas_stations.append(round(math.sqrt((city[0]-cor[0])**2 + (city[1]-cor[1])**2), 2))
+        print "odleglosci ->", distances_to_gas_stations
+        closest_station = distances_to_gas_stations.index(min(distances_to_gas_stations))
+        print "najblizsza stacja  ->", gas_station[closest_station]
+        new_tour = min(distances_to_gas_stations)
+         #TODO put new element into cities
 
-        #TODO find the nearest gas station
-        #TODO add distance station-next_city to new tour
+
+        #TODO count distances to all station -  done
+        #TODO find the nearest gas station - done
+        #TODO add distance station->next_city to new tour - done
+        #TODO add distance to the closest next hop city
         #TODO set bak to full
+        time.sleep(100)
         return new_tour
 
 
 def count_distance(cities, tour, zlamane_iteracje):
     tracer = 0
     bak = 500
-    bak_treshold = 400
+    bak_treshold = 50
     count_sum = True
     new_tour = 0
     for i in range(cities_no):
@@ -86,7 +99,7 @@ def count_distance(cities, tour, zlamane_iteracje):
 
         #wyrazenie warunkowe obnizajace koszty obliczeniowe w skrypcie
         #jezeli w czasie obliczen kosztu nowej trasy napotkamy na wartosc, ktora JUZ przekracza ostatnia najoptymalniejsza, to przestajemy juz dalej ja liczyc
-        if new_tour > bak_treshold:
+        if new_tour > bak_treshold:     #kiedy new_tour przekroczy bak
            new_tour = add_gasStation(new_tour, cities[i])
         if tour <= new_tour:
             count_sum = False

@@ -93,6 +93,9 @@ while(temperature > 1):       #jaka granice wybrac????
         #     # print "zlamana petal"
         #     break
 
+
+##
+
     # draw_chart(cities)  #do ogladania jak optymalizuje  nam sie trasa
 
     if count_sum == True:
