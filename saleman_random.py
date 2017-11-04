@@ -60,8 +60,8 @@ def swap(cities):
 
 def add_gasStation(new_tour):
 
-        print "find the nearest petrol station"
-        #TODO find the nearest petrol station
+        print "find the nearest gas station"
+        #TODO find the nearest gas station
         #TODO add distance station-next_city to new tour
         #TODO set bak to full
         return new_tour
