@@ -17,12 +17,13 @@ print "oryginalne city ", cities
 cities = [[16, 50], [62, 91], [39, 92], [43, 8], [11, 71], [34, 31], [71, 24],[36,69],[21,98]]
 cities_no = len(cities)
 #----------------------------------------------------
+#-- GAS STATIONS ---
+gas_station = [[23, 56], [85, 34], [83, 21], [68, 23], [94, 32], [83, 35], [47, 23]]
+
+
 
 
 def draw_chart(path, duration = 0.5):
-    print "path to ", path
-    print "path [0] to ", path[0]
-
     path.append(path[0])
     labels = ['miasto_{}'.format(i + 1) for i in range(len(cities))]
     plt.plot(*zip(*path), marker='x')
@@ -55,21 +56,25 @@ def swap(cities):
 #             for k in cities:
 #                 dis.append(round(math.sqrt((i[0]-j[0])**2 + (i[1]-j[1])**2), 2))
 #         all_distances.append(dis)
-def check_bak(new_tour):
-    if new_tour > bak_treshold:
+
+
+def add_gasStation(new_tour):
+
         print "find the nearest petrol station"
-        # find the nearest petrol station
-        # add distance station-next_city to new tour
-        # set bak to full
+        #TODO find the nearest petrol station
+        #TODO add distance station-next_city to new tour
+        #TODO set bak to full
+        return new_tour
 
 
 def count_distance(cities, tour, zlamane_iteracje):
     tracer = 0
-    bak = 100
-    bak_treshold = 50
+    bak = 500
+    bak_treshold = 400
     count_sum = True
-
+    new_tour = 0
     for i in range(cities_no):
+
         if i == cities_no-1:
             dis.append(round(math.sqrt((cities[i][0] - cities[0][0])**2 + ((cities[i][1] - cities[0][1])**2)), 2))
         else:
@@ -79,12 +84,14 @@ def count_distance(cities, tour, zlamane_iteracje):
 
         #wyrazenie warunkowe obnizajace koszty obliczeniowe w skrypcie
         #jezeli w czasie obliczen kosztu nowej trasy napotkamy na wartosc, ktora JUZ przekracza ostatnia najoptymalniejsza, to przestajemy juz dalej ja liczyc
-
+        if new_tour > bak_treshold:
+           new_tour = add_gasStation(new_tour)
         if tour <= new_tour:
             count_sum = False
             zlamane_iteracje = zlamane_iteracje +1
             print "zlamana petal"
             break
+
     return cities, count_sum, zlamane_iteracje, new_tour
 
 
