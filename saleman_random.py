@@ -21,13 +21,21 @@ gas_station = [[70, 56], [85, 34], [83, 21], [38, 23], [94, 32], [83, 35], [47, 
 
 def draw_chart(path, duration=0.5):
     path.append(path[0])
+    labels_gasStation = ['gas station_{}'.format(i + 1) for i in range(len(gas_station))]
+    print labels_gasStation
     labels = ['miasto_{}'.format(i + 1) for i in range(len(cities))]
     plt.plot(*zip(*path), marker='x')
     i = 0
     for cor in path:
         plt.annotate(labels[i-1], xy=(cor[0], cor[1]), xytext=(2, 2), textcoords='offset points')
         i += 1
-    plt.show(block=False)
+    i = 0
+    for cor in gas_station:
+        # print "cor stacji ", cor[0], cor[1]
+        # print "label ", gas_station[i]
+        plt.annotate(labels_gasStation[i-1], xy=(cor[0], cor[1]), xytext=(2, 2), textcoords='offset points')
+        i += 1
+    plt.show(block=True)
     time.sleep(duration)
     plt.close()
 
@@ -44,39 +52,50 @@ def swap(cities):
     cities[city2_id] = temp
 
 
-def add_gasStation(new_tour, city):
+def add_gasStation(new_tour, city1, city2):
+        global cities
         print "find the nearest gas station"
         distances_to_gas_stations = []
         print "stacje paliw -> ", gas_station
-        print "miasto ->", city
+        print "miasto ->", city1
         for cor in gas_station:
-            distances_to_gas_stations.append(round(math.sqrt((city[0]-cor[0])**2 + (city[1]-cor[1])**2), 2))
+            distances_to_gas_stations.append(round(math.sqrt((city1[0]-cor[0])**2 + (city1[1]-cor[1])**2), 2))
         print "odleglosci ->", distances_to_gas_stations
         closest_station = distances_to_gas_stations.index(min(distances_to_gas_stations))
-        print "najblizsza stacja  ->", gas_station[closest_station]
-        city_id = cities.index(city)
+        cor_closest_station = gas_station[closest_station]
+        print "najblizsza stacja  ->", cor_closest_station
+        city1_id = cities.index(city1)
         new_tour += min(distances_to_gas_stations)
-        cities.insert(city_id + 1, gas_station[closest_station])
+        print "new_tour + dystans do stacji ->", new_tour
+        cities.insert(city1_id + 1, cor_closest_station)
         print "cities z nowa satcja ", cities
 
-
-
+        distances_to_city2 = (round(math.sqrt((city2[0]-cor_closest_station[0])**2 + (city2[1]- cor_closest_station[1])**2), 2))
+        new_tour += distances_to_city2
+        print "new_tour + dystans ze stacji", cor_closest_station, "do next hop",city2, " -> ", new_tour
+        bak = 200
         # TODO count distances to all station -  done
         # TODO find the nearest gas station - done
         # TODO add distance station->next_city to new tour - done
         # TODO put new element-clostest_station   into cities table next to city - done
-        # TODO add distance to the closest next hop city
-        # TODO set bak to full
-        time.sleep(100)
-        return new_tour
+        # TODO add distance to the closest next hop city - ??
+        # TODO set bak to full - ??
+        # time.sleep(80)
+        return cities, new_tour, bak
+
+
+
+
+
 
 
 def count_distance(cities, tour, zlamane_iteracje):
     tracer = 0
-    bak = 500
-    bak_treshold = 50
+    bak = 200
+    bak_treshold = 115
     count_sum = True
     new_tour = 0
+    cities_backup = cities[:]
     for i in range(cities_no):
 
         if i == cities_no-1:
@@ -84,17 +103,26 @@ def count_distance(cities, tour, zlamane_iteracje):
         else:
             dis.append(round(math.sqrt((cities[i][0] - cities[i+1][0])**2 + ((cities[i][1] - cities[i+1][1])**2)), 2))
         new_tour = new_tour + dis[i]
-        bak = bak - dis[i]*0.05      #zmienijszenie backu
+        bak = bak - dis[i]*0.25      #zmienijszenie bak
 
         # wyrazenie warunkowe obnizajace koszty obliczeniowe w skrypcie
         # jezeli w czasie obliczen kosztu nowej trasy napotkamy na wartosc, ktora JUZ przekracza ostatnia najoptymalniejsza, to przestajemy juz dalej ja liczyc
-        if new_tour > bak_treshold:     #kiedy new_tour przekroczy bak
-           new_tour = add_gasStation(new_tour, cities[i])
+        print "bak ", bak, "bak tresholdd ", bak_treshold
+        if bak < bak_treshold:     #kiedy new_tour przekroczy bak
+           print "-----------w ifie -------------"
+           # time.sleep(1)
+           try:
+               cities, new_tour, bak = add_gasStation(new_tour, cities[i], cities[i+1])
+           except Exception as e:
+               print e
+
         if tour <= new_tour:
             count_sum = False
             zlamane_iteracje = zlamane_iteracje +1
-            print "zlamana petal"
+            cities = cities_backup
+            # print "zlamana petal"
             break
+    print "\n"
 
     return cities, count_sum, zlamane_iteracje, new_tour
 
@@ -110,6 +138,7 @@ cooling_rate = 0.003
 best_cities = []
 
 # glowna petla szukajaca optymalnej trasy
+
 while(temperature > 1):
     dis = []
     checkPoint += 1       #sprawdza iteracje petli
@@ -118,12 +147,12 @@ while(temperature > 1):
     cities, count_sum, zlamane_iteracje, new_tour = count_distance(cities, tour, zlamane_iteracje)
     # draw_chart(cities)  #do ogladania jak optymalizuje  nam sie trasa
 
-    if count_sum == True:
+    if count_sum:
         sum_dis = sum(dis)
         print sum_dis
         # if math.exp((tour - sum_dis)/temperature ) > (random.randint(0,100)*5) or sum_dis < tour :
         tour = new_tour
-        tour = sum_dis
+        # tour = sum_dis
         best_cities = cities[:]
         print "best cities ", best_cities
 
