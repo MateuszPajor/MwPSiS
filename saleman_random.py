@@ -1,27 +1,50 @@
 from __future__ import division
-import random, numpy, copy, matplotlib.pyplot as plt
+import random,  copy, matplotlib.pyplot as plt
 import string, os,  math, time
+from datetime import datetime
 
-cities_no = 9
+
+startTime = datetime.now()
+
+cities_no = 10
 cities = [random.sample(range(100), 2) for x in range(cities_no)]
 all_distances = []
 print "oryginalne city ", cities
+
 
 # ----------------------------------------------------
 # DO TESTOW | zahardkodowane wspolrzedne miast | minimalna trasa 164.63
 # cities = [[80, 39], [72, 60], [11, 52], [78, 58],[45,72]]
 # cities_no = len(cities)
 # ----------------------------------------------------
-cities = [[16, 50], [62, 91],  [43, 8], [11, 71], [34, 31],[23,89],[76,42],[76,90]] #8
-cities_no = len(cities)
+# cities = [[16, 50], [62, 91],  [43, 8], [11, 71], [34, 31],[23,89],[76,42],[76,90]] #8
+cities =  [[82, 26], [53, 2], [87, 51], [54, 70], [3, 37], [28, 33], [95, 56], [24, 69], [22, 56], [47, 26]] #10 miast
+# cities_no = len(cities)
 # ----------------------------------------------------
 # -- GAS STATIONS ---
 gas_station = [(1, 1), (85, 34), (83, 54), (38, 23), (94, 32),  (47, 67)]
 
 
 
-def draw_chart(path, duration=0.5):
+def draw_chart(path, added_gasStation, duration=0.5):
     global gas_station
+    # added_gasStation = {78:(6,7), 8:(78,93)}
+    sorted_ids = sorted(added_gasStation.keys())
+    j = len(sorted_ids)-1
+    print "____________", sorted_ids
+    # try :
+    for k in sorted_ids:
+        key = sorted_ids[j]
+        value = added_gasStation[key]
+        print "!!!!!!!", value
+        value = list(value)
+        path.insert(key, value)
+        j -= 1
+
+    # except Exception as e:
+    #     print "!!!!!!!!!", e
+    #     y = sorted_ids[0]
+    #     path.insert(added_gasStation[y], y) # slownik od krotki nie dziala
     path.append(path[0])
     labels_gasStation = ['GS_{}'.format(i + 1) for i in range(len(gas_station))]
     labels = ['M_{}'.format(i + 1) for i in range(len(path))]
@@ -52,7 +75,7 @@ def swap():
     cities[city2_id] = temp
 
 
-def add_gasStation(new_tour, city1, city2):
+def add_gasStation(new_tour, city1, city2, gasStations_dict):
         global cities
         cities_working_backup = cities[:]
         print "find the nearest gas station"
@@ -69,6 +92,7 @@ def add_gasStation(new_tour, city1, city2):
         new_tour += min(distances_to_gas_stations)
         print "new_tour + dystans do stacji ->", new_tour
         cities_working_backup.insert(city1_id + 1, cor_closest_station)
+        gasStations_dict[city1_id+1] =  cor_closest_station
         print "cities z nowa satcja ", cities_working_backup
 
         distances_to_city2 = (round(math.sqrt((city2[0]-cor_closest_station[0])**2 + (city2[1]- cor_closest_station[1])**2), 2))
@@ -82,7 +106,7 @@ def add_gasStation(new_tour, city1, city2):
         # TODO add distance to the closest next hop city - done
         # TODO set tank to full - done
         # time.sleep(80)
-        return new_tour, tank, cities_working_backup
+        return new_tour, tank, cities_working_backup, gasStations_dict
 
 
 
@@ -91,13 +115,16 @@ def add_gasStation(new_tour, city1, city2):
 
 
 def count_distance(tour, zlamane_iteracje):
-    tank = 200
-    tank_treshold = 115
+    tank = 180
+    tank_treshold = 120
     count_sum = True
     new_tour = 0
     print "count distance cities ", cities
     cities1 = cities[:]
     # cities_backup = cities[:]
+
+    gasStations_dict = {}
+    # print "cor gas station - wyczyszczone", gasStations_dict
     for i in range(cities_no):
 
         if i == cities_no-1:
@@ -107,16 +134,17 @@ def count_distance(tour, zlamane_iteracje):
             dis.append(round(math.sqrt((cities1[i][0] - cities1[i+1][0])**2 + ((cities1[i][1] - cities1[i+1][1])**2)), 2))
             print "trasa od city", i,"do city ", i+1
         new_tour = new_tour + dis[i]
-        tank = tank - dis[i]*0.25      #zmienijszenie tank
+        tank = tank - dis[i]*0.30      #zmienijszenie tank
+        print "tank ", tank, "tank tresholdd ", tank_treshold #print do obserwacji zmiany baku
 
         # wyrazenie warunkowe obnizajace koszty obliczeniowe w skrypcie
         # jezeli w czasie obliczen kosztu nowej trasy napotkamy na wartosc, ktora JUZ przekracza ostatnia najoptymalniejsza, to przestajemy juz dalej ja liczyc
-        print "tank ", tank, "tank tresholdd ", tank_treshold
         if tank < tank_treshold:     #kiedy new_tour przekroczy tank
            print "-----------w ifie -------------"
            # time.sleep(1)
            try:
-               new_tour, tank, cities_candidate = add_gasStation(new_tour, cities[i], cities[i+1])
+               new_tour, tank, cities_candidate, gasStations_dict = add_gasStation(new_tour, cities[i], cities[i+1], gasStations_dict)
+               print "koordynaty  gas station - uzupelniony", gasStations_dict
            except Exception as e:
                print e
 
@@ -129,7 +157,7 @@ def count_distance(tour, zlamane_iteracje):
 
     print "\n"
 
-    return count_sum, zlamane_iteracje, new_tour
+    return count_sum, zlamane_iteracje, new_tour, gasStations_dict
 
 
 # zmienne do stystyk
@@ -138,7 +166,7 @@ checkPoint= 0
 # dane poczatkowe
 sum_dis = 10000
 tour = 600
-temperature = 99
+temperature = 99999999
 cooling_rate = 0.003
 best_cities = []
 
@@ -147,10 +175,12 @@ best_cities = []
 while(temperature > 10):
     dis = []
     checkPoint += 1       #sprawdza iteracje petli
+    stacje = {}
+
     # cities = [[16, 50], [62, 91],  [43, 8], [11, 71], [34, 31],[23,89],[76,42],[76,90]]
-    # swap()
+    swap()
     # random.shuffle(cities)          #ustatwie nowa, calkowicie losowa trase
-    count_sum, zlamane_iteracje, new_tour = count_distance(tour, zlamane_iteracje)
+    count_sum, zlamane_iteracje, new_tour, stacje = count_distance(tour, zlamane_iteracje)
     # draw_chart(cities)  #do ogladania jak optymalizuje  nam sie trasa
 
     if count_sum:
@@ -160,7 +190,8 @@ while(temperature > 10):
         tour = new_tour
         # tour = sum_dis
         best_cities = cities[:]
-        print "best cities ", best_cities
+        best_stations = dict(stacje)     #skopiuj stacje
+        print "best cities  to ", cities, "+ stacje benzymnowe ", best_stations
         print "\n\n"
     # cities = cities_backup
     temperature = temperature*(1 - cooling_rate)
@@ -171,9 +202,9 @@ print "przebyty deystans to ", tour
 print "przejsc petli  ", checkPoint
 print "zlamanych iteracji  ", zlamane_iteracje
 print "stosunek zlamanych petli do clakowitych, narazie jedyny czynnik optymalizacyjny:", zlamane_iteracje/checkPoint #ostatnie wykonanie whila wprowadza count_sum na true
-
+print "CZAS ",  datetime.now() - startTime
 # koncowa trasa
-print "best cities ", best_cities
-draw_chart(best_cities, 7)
+print "best cities  to ", cities, "+ stacje benzymnowe ", best_stations
+draw_chart(best_cities, best_stations, 7)
 
 
