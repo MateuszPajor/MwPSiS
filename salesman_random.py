@@ -13,13 +13,14 @@ print "oryginalne city ", cities
 
 
 # ----------------------------------------------------
-# DO TESTOW | zahardkodowane wspolrzedne miast | minimalna trasa 164.63
+# DO TESTOW | zahardkodowane wspolrzedne miast |
+#--------------------------------------------------------
 # cities = [[80, 39], [72, 60], [11, 52], [78, 58],[45,72]]
 # cities_no = len(cities)
 # ----------------------------------------------------
 # cities = [[16, 50], [62, 91],  [43, 8], [11, 71], [34, 31],[23,89],[76,42],[76,90]] #8
-cities =  [[82, 26], [53, 2], [87, 51], [54, 70], [3, 37], [28, 33], [95, 56], [24, 69], [22, 56], [47, 26]] #10 miast
-# cities_no = len(cities)
+cities = [[82, 26], [53, 2], [87, 51], [54, 70], [3, 37], [28, 33], [95, 56], [24, 69], [22, 56], [47, 26]] #10 miast
+cities_no = len(cities)
 # ----------------------------------------------------
 # -- GAS STATIONS ---
 gas_station = [(1, 1), (85, 34), (83, 54), (38, 23), (94, 32),  (47, 67)]
@@ -31,7 +32,6 @@ def draw_chart(path, added_gasStation, duration=0.5):
     # added_gasStation = {78:(6,7), 8:(78,93)}
     sorted_ids = sorted(added_gasStation.keys())
     j = len(sorted_ids)-1
-    print "____________", sorted_ids
     # try :
     for k in sorted_ids:
         key = sorted_ids[j]
@@ -48,7 +48,7 @@ def draw_chart(path, added_gasStation, duration=0.5):
     path.append(path[0])
     labels_gasStation = ['GS_{}'.format(i + 1) for i in range(len(gas_station))]
     labels = ['M_{}'.format(i + 1) for i in range(len(path))]
-    plt.plot(*zip(*path), marker='x' )
+    plt.plot(*zip(*path), marker='x')
     plt.plot(*zip(*gas_station), marker='o', linestyle=' ')
     i = 0
     for cor in path:
@@ -122,9 +122,7 @@ def count_distance(tour, zlamane_iteracje):
     print "count distance cities ", cities
     cities1 = cities[:]
     # cities_backup = cities[:]
-
     gasStations_dict = {}
-    # print "cor gas station - wyczyszczone", gasStations_dict
     for i in range(cities_no):
 
         if i == cities_no-1:
@@ -141,16 +139,15 @@ def count_distance(tour, zlamane_iteracje):
         # jezeli w czasie obliczen kosztu nowej trasy napotkamy na wartosc, ktora JUZ przekracza ostatnia najoptymalniejsza, to przestajemy juz dalej ja liczyc
         if tank < tank_treshold:     #kiedy new_tour przekroczy tank
            print "-----------w ifie -------------"
-           # time.sleep(1)
            try:
                new_tour, tank, cities_candidate, gasStations_dict = add_gasStation(new_tour, cities[i], cities[i+1], gasStations_dict)
-               print "koordynaty  gas station - uzupelniony", gasStations_dict
+               print "koordynaty  gas stations - uzupelniony", gasStations_dict
            except Exception as e:
                print e
 
         if tour <= new_tour:
             count_sum = False
-            zlamane_iteracje = zlamane_iteracje +1
+            zlamane_iteracje += 1
 
             print "zlamana petal"
             break
@@ -166,7 +163,7 @@ checkPoint= 0
 # dane poczatkowe
 sum_dis = 10000
 tour = 600
-temperature = 99999999
+temperature = 999999999
 cooling_rate = 0.003
 best_cities = []
 
@@ -176,13 +173,9 @@ while(temperature > 10):
     dis = []
     checkPoint += 1       #sprawdza iteracje petli
     stacje = {}
-
-    # cities = [[16, 50], [62, 91],  [43, 8], [11, 71], [34, 31],[23,89],[76,42],[76,90]]
     swap()
     # random.shuffle(cities)          #ustatwie nowa, calkowicie losowa trase
     count_sum, zlamane_iteracje, new_tour, stacje = count_distance(tour, zlamane_iteracje)
-    # draw_chart(cities)  #do ogladania jak optymalizuje  nam sie trasa
-
     if count_sum:
         sum_dis = sum(dis)
         print sum_dis
@@ -204,7 +197,7 @@ print "zlamanych iteracji  ", zlamane_iteracje
 print "stosunek zlamanych petli do clakowitych, narazie jedyny czynnik optymalizacyjny:", zlamane_iteracje/checkPoint #ostatnie wykonanie whila wprowadza count_sum na true
 print "CZAS ",  datetime.now() - startTime
 # koncowa trasa
-print "best cities  to ", cities, "+ stacje benzymnowe ", best_stations
+print "best cities  to ", best_cities, "+ stacje benzymnowe ", best_stations
 draw_chart(best_cities, best_stations, 7)
 
 
