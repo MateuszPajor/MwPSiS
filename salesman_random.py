@@ -12,7 +12,7 @@ def draw_chart(path, added_gasStation, duration=0.5):
     # added_gasStation = {78:(6,7), 8:(78,93)}
     sorted_ids = sorted(added_gasStation.keys())
     j = len(sorted_ids)-1
-    # try :
+    path_copy = path[:]
     for k in sorted_ids:
         key = sorted_ids[j]
         value = added_gasStation[key]
@@ -21,16 +21,16 @@ def draw_chart(path, added_gasStation, duration=0.5):
         j -= 1
     path.append(path[0])
     labels_gasStation = ['GS_{}'.format(i + 1) for i in range(len(gas_station))]
-    labels = ['M_{}'.format(i + 1) for i in range(len(path))]
-    plt.plot(*zip(*path), marker='x')
+    labels = ['M_{}'.format(i + 1) for i in range(len(path)-1)]
+    plt.plot(*zip(*path), marker='x')  # * - skrot do przekazywania wielu zmiennym ktore sa zapakowane w np listach lub krotkach
     plt.plot(*zip(*gas_station), marker='o', linestyle=' ')
     i = 0
-    for cor in path:
-        plt.annotate(labels[i-1], xy=(cor[0], cor[1]), xytext=(2, 2), textcoords='offset points')
+    for cor in path_copy:
         i += 1
+        plt.annotate(labels[i-1], xy=(cor[0], cor[1]), xytext=(2, 2), textcoords='offset points')
     i = 0
     for j in gas_station:
-        plt.annotate(labels_gasStation[i], xy=(j[0], j[1]), xytext=(4, 4), textcoords='offset points')
+        plt.annotate(labels_gasStation[i], xy=(j[0], j[1]), xytext=(2, 10), textcoords='offset points')
         i += 1
     plt.show(block=True)
     time.sleep(duration)
@@ -39,6 +39,9 @@ def draw_chart(path, added_gasStation, duration=0.5):
 
 def swap():
     swap_tab = range(len(cities))
+    print "swap table ",swap_tab
+    del swap_tab[0]
+    print "swap table ",swap_tab
     city1_id = random.choice(swap_tab)
     swap_tab.remove(city1_id)
     city2_id = random.choice(swap_tab)
