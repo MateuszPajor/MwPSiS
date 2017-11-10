@@ -73,7 +73,7 @@ def add_gasStation(new_tour, city1, city2, gasStations_dict):
         new_tour += distances_to_city2
         print "new_tour + dystans ze stacji", cor_closest_station, "do next hop",city2, " -> ", new_tour
         tank = 200
-        return new_tour, tank, cities_working_backup, gasStations_dict
+        return new_tour, tank, gasStations_dict
 
 
 def count_distance(tour, zlamane_iteracje, dis):
@@ -103,7 +103,7 @@ def count_distance(tour, zlamane_iteracje, dis):
         if tank < tank_treshold:     #kiedy new_tour przekroczy tank
            print "KONCZY SIE BENZYNA"
            try:
-               new_tour, tank, cities_candidate, gasStations_dict = add_gasStation(new_tour, cities[i], cities[i+1], gasStations_dict)
+               new_tour, tank, gasStations_dict = add_gasStation(new_tour, cities[i], cities[i+1], gasStations_dict)
                print "koordynaty  gas stations - uzupelniony", gasStations_dict
            except Exception as e:
                print e
