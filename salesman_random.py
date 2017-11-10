@@ -11,14 +11,11 @@ def draw_chart(path, added_gasStation, duration=0.5):
     global gas_station
     # added_gasStation = {78:(6,7), 8:(78,93)}
     sorted_ids = sorted(added_gasStation.keys())
-    j = len(sorted_ids)-1
     path_copy = path[:]
-    for k in sorted_ids:
-        key = sorted_ids[j]
-        value = added_gasStation[key]
+    for k in sorted_ids[::-1]:
+        value = added_gasStation[k]
         value = list(value)
-        path.insert(key, value)
-        j -= 1
+        path.insert(k, value)
     path.append(path[0])
     labels_gasStation = ['GS_{}'.format(i + 1) for i in range(len(gas_station))]
     labels = ['M_{}'.format(i + 1) for i in range(len(path)-1)]
@@ -138,7 +135,7 @@ def main():
         # random.shuffle(cities)          #ustatwie nowa, calkowicie losowa trase
 
         count_sum, zlamane_iteracje, new_tour, stations = count_distance(tour, zlamane_iteracje, dis)
-        # if przypisujacy najlepsze rozwiazania  rozwiazanie do finalnych zmiennych
+        # if przypisujacy najlepsze rozwiazania do finalnych zmiennych
         if count_sum:
             sum_dis = sum(dis)
             print sum_dis
@@ -169,7 +166,6 @@ def main():
 cities_no = 10
 cities = [random.sample(range(100), 2) for x in range(cities_no)]
 all_distances = []
-print "oryginalne city ", cities
 
 # ----------------------------------------------------
 # DO TESTOW | zahardkodowane wspolrzedne miast |
@@ -181,7 +177,7 @@ cities_no = len(cities)
 # ----------------------------------------------------
 # -- GAS STATIONS ---
 gas_station = [(1, 1), (85, 34), (83, 54), (38, 23), (94, 32), (47, 67)]
-
+print "oryginalne city ", cities
 
 if __name__ == "__main__":
     main()
