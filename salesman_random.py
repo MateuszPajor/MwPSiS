@@ -5,7 +5,7 @@ from datetime import datetime
 
 # TODO dodac zmienna mierzaca czas kurierowi
 # TODO postoje u klientow i na stacjach
-# TODO rozwiazac prbolem(gdy jest ostatnia iteracja for-a nie mozna do funkcji przeslac cities[i +1]):
+# TODO rozwiazac problem(gdy jest ostatnia iteracja for-a nie mozna do funkcji przeslac cities[i +1]):
 #            try:
 #                new_tour, tank, gasStations_dict = add_gasStation(new_tour, cities[i], cities[i+1], gasStations_dict)
 #                print "koordynaty  gas stations - uzupelniony", gasStations_dict
