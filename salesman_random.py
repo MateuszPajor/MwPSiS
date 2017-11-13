@@ -172,7 +172,7 @@ def main():
     print "stosunek zlamanych petli do clakowitych, narazie jedyny czynnik optymalizacyjny:", zlamane_iteracje/checkPoint #ostatnie wykonanie whila wprowadza count_sum na true
     print "CZAS ",  datetime.now() - startTime
     # koncowa trasa
-    print "best cities  to ", best_cities, "+ stations benzymnowe ", best_stations
+    print "best cities  to ", best_cities, "+ stacje benzynowe", best_stations
     draw_chart(best_cities, best_stations, 7)
 
 
