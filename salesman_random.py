@@ -6,6 +6,12 @@ from datetime import datetime
 # TODO dodac zmienna mierzaca czas kurierowi
 # TODO postoje u klientow i na stacjach
 
+# ALGORYTM
+# 1. Ustaw calkiem losowa trase -> tasae wyznacza kolejnosc tablicy cities
+# 3. licz trase po koleji z wezla n do wezla n+1, gdy bak przekroczy tank treshold, dodaj dystans z obecnego city->najblizszej stacji i z stacji->next hopa, zapisz wspolzedne wybranej stacji do gasStations_dict
+# 4. jezeli trasa jest krotsza od ostatnie najlepszej, ustaw ja jako najbardziej optymalna razem z wpisanymi dla tej trasy stacjami
+# 5. zrob swapa na dwoch losowych wezlach
+# 6. przejdz do 2, jezeli temperatura powyzej tresholdu
 
 startTime = datetime.now()
 
